@@ -39,19 +39,38 @@ window.countNRooksSolutions = function(n) {
   var board = new Board({n:n});
 
   function recurse(board, rowIx){
+  //   function printBoard(board, msg){
+  //   // For debugging, printing the board after every change to the board
+  //   for(var i = 0; i < board.rows().length; i++){
+  //     console.log(board.rows()[i]);
+  //   }
+  //   console.log('^'+msg+'--------------');
+  // }
     // base Step
     if(rowIx >= n){
       return;
     }else{
+      // recursive case
       for(var i = 0; i < n; i++){
+        // Iterate through each element of the row
+        // 1. Toggle the element
+        // 2. Test for Column Conflicts
+        // 3. Recurse if there are no conflicts
+        // 4. Untoggle
         board.togglePiece(rowIx, i);
         if(board.hasColConflictAt(i)){
+          // If conflict, toggle back to 0 and move to the next element
           board.togglePiece(rowIx,i)
           continue;
         }
         if(rowIx === n - 1)
+          // Tests to see if we're on the last row, AND our tests are all passed
           solutionCount++;
+
+        // Call the recursive step
         recurse(board, rowIx+1);
+
+        // Untoggle the element before going to the next one
         board.togglePiece(rowIx,i);
       }
     }
@@ -70,7 +89,17 @@ window.countNRooksSolutions = function(n) {
 window.findNQueensSolution = function(n) {
   var solution = new Board({n:n});
   var ans;
+  var debug = 0;
   recurse(solution, 0);
+
+  function printBoard(board, msg){
+    if(debug === 0) return;
+    // For debugging, printing the board after every change to the board
+    for(var i = 0; i < board.rows().length; i++){
+      console.log(board.rows()[i]);
+    }
+    console.log('^'+msg+'--------------');
+  }
 
   function recurse(board, rowIx){
     // base case
@@ -82,42 +111,95 @@ window.findNQueensSolution = function(n) {
       // Loop through the elements of the row
         // Toggle, Diagnol+Col Test, last row solution test, Toggle
       for(var i = 0; i < n; i++){
-    if(rowIx === 2 && i === 1)
-      debugger;
         board.togglePiece(rowIx, i);
+        printBoard(board, 'toggle on');
 
         // Test Col Conflict, Minor+Major diagonal
-        var test1 = board.hasColConflictAt(i)
+        // Turn this into a big AND statement instead of looking at each using OR statement
+
+        var test1 = board.hasColConflictAt(i);
         var test2 = board.hasMinorDiagonalConflictAt(board._getFirstRowColumnIndexForMinorDiagonalOn(rowIx, i));
         var test3 = board.hasMajorDiagonalConflictAt(board._getFirstRowColumnIndexForMajorDiagonalOn(rowIx, i));
-        if(test1 || test2 || test3){
+
+        if(!test1 && !test2 && !test3){
+        // Passed the tests
+          if(rowIx === n - 1){ // In the final row && passed tests after placing final piece
+            ans = boardToArray(board);
+            return;
+          }
+          // Recurse
+          recurse(board, rowIx+1)
+          if(ans) return;
+
+          // Toggle off
           board.togglePiece(rowIx, i);
+          printBoard(board, 'toggle off');
+        }else{
+          // failed the tests
+          board.togglePiece(rowIx, i);
+          printBoard(board, 'failed tests & toggle off');
           continue;
-        }
-        //tests are passed
-        if(i === n - 1){
-          ans = new Board(board.rows());
-          return;
-        }
 
-        // Recurse
-        recurse(board, rowIx+1)
+        }
+      }// end of for loop
+    }
 
-        // Toggle off
-        board.togglePiece(rowIx, i);
+    function boardToArray(board){
+      // Just copies the board's row arrays and returns it
+      var returnArr = [];
+      for(var i = 0; i < board.rows().length; i ++){
+        returnArr.push(board.rows()[i].slice())
       }
+      return returnArr;
     }
   }
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   // ans found makes ANS always pass the base case
-  return ans === undefined ? solution.rows() : ans.rows();
+  return ans === undefined ? solution.rows() : ans;
 };
 
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  if(n === 0)
+    return 1;
+  var solution = new Board({n:n});
+  var solutionCount = 0;
+  var debug = 1;
+  recurse(solution, 0);
+
+
+  function recurse (board, rowIx){
+    // Helper Function for Debugging -- prints out the board
+    // function printBoard(board, msg){
+    //   if (msg === undefined) msg = "";
+    //   if(debug === 0) return;
+    //   // For debugging, printing the board after every change to the board
+    //   for(var i = 0; i < board.rows().length; i++){
+    //     console.log(board.rows()[i]);
+    //   }
+    //   console.log('^'+msg+'--------------');
+    // }
+
+    // Base Case
+    if (rowIx === n){
+      return;
+    }else {
+      for (var i = 0; i < n; i++){
+        // Recursive case
+        board.togglePiece(rowIx, i);
+        if(!board.hasAnyQueenConflictsOn(rowIx, i)){
+          if (rowIx === n - 1){
+            solutionCount++;
+          }else{
+            recurse(board, rowIx + 1);
+          }
+        }
+        board.togglePiece(rowIx, i);
+      }
+    }
+  }
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;

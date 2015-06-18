@@ -194,43 +194,45 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
+
       var rows = this.rows();
       var found = 0;
       var n = rows.length;
       var p = minorDiagonalColumnIndexAtFirstRow;
-
       var startRowIx, colIx, endRowIx;
 
-      // Parameter checking
-      if(p === 0 || p < -(n-2) || p >= n)
-      	return false;
-
-      startRowIx = p > 0 ? 0 : Math.abs(p);
-      endRowIx = p > 0 ? p : n-1;
-      colIx = endRowIx;
-
-      for(var i = startRowIx; i <= endRowIx ; i++){
-        if(rows[i][colIx]===1)
+      for(var i = 0; i < n; i++){
+        if(rows[i][p] && rows[i][p] === 1)
           found++;
-        // Jump  out of function if we found a conflict already
         if(found >= 2)
           return true;
-        colIx--;
+        p--;
       }
 
-      return found >= 2 ? true : false;
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      if(n <= 2) return false;
       var n = this.rows().length;
-      var pMax = n-2;
-      var pMin = -pMax;
-      for(var i = pMin; i <= pMax; i++){
-        if(i !== 0 && this.hasMinorDiagonalConflictAt(i))  // ONLY ENTER if i !== 0
+      var pMax = (n-1) + (n-2);
+
+      for(var i = 1; i <= pMax; i++){
+        if(this.hasMinorDiagonalConflictAt(i))
           return true;
       }
+
       return false;
+
+
+      // var pMax = n-2;
+      // var pMin = -pMax;
+      // for(var i = pMin; i <= pMax; i++){
+      //   if(i !== 0 && this.hasMinorDiagonalConflictAt(i))  // ONLY ENTER if i !== 0
+      //     return true;
+      // }
+      // return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
