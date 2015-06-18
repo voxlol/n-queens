@@ -154,6 +154,10 @@
       var n = rows.length;
       var p = majorDiagonalColumnIndexAtFirstRow;
 
+      // parameter checking
+      if(p < -(n-2) || p > (n-2))
+      	return false;
+
       var startRowIx, colIx, endRowIx;
 
       startRowIx = p <= 0 ? Math.abs(p) : 0;
@@ -197,8 +201,9 @@
 
       var startRowIx, colIx, endRowIx;
 
-      if(p === 0)
-      	return "ERROR";
+      // Parameter checking
+      if(p === 0 || p < -(n-2) || p >= n)
+      	return false;
 
       startRowIx = p > 0 ? 0 : Math.abs(p);
       endRowIx = p > 0 ? p : n-1;
