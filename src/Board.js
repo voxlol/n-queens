@@ -88,6 +88,8 @@
         if(row[i]===1){
           found++;
         }
+        if(found >= 2)
+          return true;
       }
 
       return found >= 2 ? true : false; // fixme
@@ -117,6 +119,8 @@
       for(var i=0; i<rows.length; i++){
         if(rows[i][colIndex] === 1)
           found++;
+        if(found >= 2)
+          return true;
       }
       return found >= 2 ? true : false; // fixme // fixme
     },
