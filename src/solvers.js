@@ -38,7 +38,7 @@ window.countNRooksSolutions = function(n) {
   var solutionCount = 0;
   var board = new Board({n:n});
 
-  function recurse(board, rowIx){
+  function recurse(rowIx){
   //   function printBoard(board, msg){
   //   // For debugging, printing the board after every change to the board
   //   for(var i = 0; i < board.rows().length; i++){
@@ -68,7 +68,7 @@ window.countNRooksSolutions = function(n) {
           solutionCount++;
 
         // Call the recursive step
-        recurse(board, rowIx+1);
+        recurse(rowIx+1);
 
         // Untoggle the element before going to the next one
         board.togglePiece(rowIx,i);
@@ -77,7 +77,7 @@ window.countNRooksSolutions = function(n) {
   }
 
   // Do an initial call to the recursion function
-  recurse(board,0);
+  recurse(0);
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
@@ -137,10 +137,9 @@ window.countNQueensSolutions = function(n) {
     return 1;
   var solution = new Board({n:n});
   var solutionCount = 0;
-  recurse(solution, 0);
+  recurse(0);
 
-
-  function recurse (board, rowIx){
+  function recurse (rowIx){
     // Helper Function for Debugging -- prints out the board
     // function printBoard(board, msg){
     //   if (msg === undefined) msg = "";
@@ -158,15 +157,14 @@ window.countNQueensSolutions = function(n) {
     }else {
       for (var i = 0; i < n; i++){
         // Recursive case
-        board.togglePiece(rowIx, i);
-        if(!board.hasAnyQueenConflictsOn(rowIx, i)){
-          if (rowIx === n - 1){
+        solution.togglePiece(rowIx, i);
+        if(!solution.hasAnyQueenConflictsOn(rowIx, i)){
+          if (rowIx === n - 1)
             solutionCount++;
-          }else{
-            recurse(board, rowIx + 1);
-          }
+          else
+            recurse(rowIx + 1);
         }
-        board.togglePiece(rowIx, i);
+        solution.togglePiece(rowIx, i);
       }
     }
   }
