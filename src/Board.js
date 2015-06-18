@@ -154,25 +154,16 @@
       var n = rows.length;
       var p = majorDiagonalColumnIndexAtFirstRow;
 
-      // parameter checking
-      if(p < -(n-2) || p > (n-2))
-      	return false;
-
-      var startRowIx, colIx, endRowIx;
-
-      startRowIx = p <= 0 ? Math.abs(p) : 0;
-      endRowIx = p <= 0 ? (n-1) : (n-1) - p;
-      colIx = p <= 0 ? 0 : p;
-
-      for(var i = startRowIx; i <= endRowIx ; i++){
-        if(rows[i][colIx]===1)
+      for (var i=0; i<rows.length; i++){
+        if(rows[i][p] && rows[i][p]===1){
           found++;
-        if(found >= 2)
+        }
+        if (found === 2){
           return true;
-        colIx++;
+        }
+        p++;
       }
-
-      return found >= 2 ? true : false;
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
