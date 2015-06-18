@@ -68,10 +68,50 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var solution = new Board({n:n});
+  var ans;
+  recurse(solution, 0);
+
+  function recurse(board, rowIx){
+    // base case
+    if(rowIx >= n || ans){
+      return;
+    }else{
+      // recursive step
+
+      // Loop through the elements of the row
+        // Toggle, Diagnol+Col Test, last row solution test, Toggle
+      for(var i = 0; i < n; i++){
+    if(rowIx === 2 && i === 1)
+      debugger;
+        board.togglePiece(rowIx, i);
+
+        // Test Col Conflict, Minor+Major diagonal
+        var test1 = board.hasColConflictAt(i)
+        var test2 = board.hasMinorDiagonalConflictAt(board._getFirstRowColumnIndexForMinorDiagonalOn(rowIx, i));
+        var test3 = board.hasMajorDiagonalConflictAt(board._getFirstRowColumnIndexForMajorDiagonalOn(rowIx, i));
+        if(test1 || test2 || test3){
+          board.togglePiece(rowIx, i);
+          continue;
+        }
+        //tests are passed
+        if(i === n - 1){
+          ans = new Board(board.rows());
+          return;
+        }
+
+        // Recurse
+        recurse(board, rowIx+1)
+
+        // Toggle off
+        board.togglePiece(rowIx, i);
+      }
+    }
+  }
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  // ans found makes ANS always pass the base case
+  return ans === undefined ? solution.rows() : ans.rows();
 };
 
 
