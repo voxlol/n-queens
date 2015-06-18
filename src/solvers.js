@@ -89,59 +89,30 @@ window.countNRooksSolutions = function(n) {
 window.findNQueensSolution = function(n) {
   var solution = new Board({n:n});
   var ans;
-  var debug = 0;
   recurse(solution, 0);
-
-  function printBoard(board, msg){
-    if(debug === 0) return;
-    // For debugging, printing the board after every change to the board
-    for(var i = 0; i < board.rows().length; i++){
-      console.log(board.rows()[i]);
-    }
-    console.log('^'+msg+'--------------');
-  }
 
   function recurse(board, rowIx){
     // base case
-    if(rowIx >= n || ans){
+    if(rowIx === n || ans){
       return;
     }else{
       // recursive step
-
-      // Loop through the elements of the row
-        // Toggle, Diagnol+Col Test, last row solution test, Toggle
       for(var i = 0; i < n; i++){
         board.togglePiece(rowIx, i);
-        printBoard(board, 'toggle on');
 
-        // Test Col Conflict, Minor+Major diagonal
-        // Turn this into a big AND statement instead of looking at each using OR statement
-
-        var test1 = board.hasColConflictAt(i);
-        var test2 = board.hasMinorDiagonalConflictAt(board._getFirstRowColumnIndexForMinorDiagonalOn(rowIx, i));
-        var test3 = board.hasMajorDiagonalConflictAt(board._getFirstRowColumnIndexForMajorDiagonalOn(rowIx, i));
-
-        if(!test1 && !test2 && !test3){
+        if(!board.hasAnyQueenConflictsOn(rowIx, i)){
         // Passed the tests
           if(rowIx === n - 1){ // In the final row && passed tests after placing final piece
             ans = boardToArray(board);
             return;
+          }else{
+            recurse(board, rowIx+1)
           }
-          // Recurse
-          recurse(board, rowIx+1)
           if(ans) return;
-
-          // Toggle off
-          board.togglePiece(rowIx, i);
-          printBoard(board, 'toggle off');
-        }else{
-          // failed the tests
-          board.togglePiece(rowIx, i);
-          printBoard(board, 'failed tests & toggle off');
-          continue;
-
         }
-      }// end of for loop
+          // failed the tests
+        board.togglePiece(rowIx, i);
+      }
     }
 
     function boardToArray(board){
@@ -166,7 +137,6 @@ window.countNQueensSolutions = function(n) {
     return 1;
   var solution = new Board({n:n});
   var solutionCount = 0;
-  var debug = 1;
   recurse(solution, 0);
 
 
