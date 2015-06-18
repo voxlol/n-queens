@@ -156,23 +156,13 @@
 
       var startRowIx, colIx, endRowIx;
 
-      // code wont work if we work outside the correct p range.
-      // make sure the parameters passed is within the correct range
-
-      if (p<=0){
-        startRowIx = Math.abs(p);
-        endRowIx = (n-1)
-        colIx = 0;
-      }else{
-        startRowIx = 0;
-        endRowIx = (n-1)-p;
-        colIx = p;
-      }
+      startRowIx = p <= 0 ? Math.abs(p) : 0;
+      endRowIx = p <= 0 ? (n-1) : (n-1) - p;
+      colIx = p <= 0 ? 0 : p;
 
       for(var i = startRowIx; i <= endRowIx ; i++){
-        if(rows[i][colIx]===1){
+        if(rows[i][colIx]===1)
           found++;
-        }
         if(found >= 2)
           return true;
         colIx++;
@@ -207,23 +197,16 @@
 
       var startRowIx, colIx, endRowIx;
 
-      // code wont work if we work outside the correct p range.
-      // make sure the parameters passed is within the correct range
+      if(p === 0)
+      	return "ERROR";
 
-      if (p>0){
-        startRowIx = 0;
-        endRowIx = p;
-        colIx = p;
-      }else if (p<0) { //p<0
-        startRowIx = Math.abs(p);
-        endRowIx = (n-1);
-        colIx = (n-1);
-      }
+      startRowIx = p > 0 ? 0 : Math.abs(p);
+      endRowIx = p > 0 ? p : n-1;
+      colIx = endRowIx;
 
       for(var i = startRowIx; i <= endRowIx ; i++){
-        if(rows[i][colIx]===1){
+        if(rows[i][colIx]===1)
           found++;
-        }
         // Jump  out of function if we found a conflict already
         if(found >= 2)
           return true;
