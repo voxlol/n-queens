@@ -14,19 +14,56 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 window.findNRooksSolution = function(n) {
-  var solution = [];
-  for(var i = 0; i < n; i++){
-    var row = [];
-    for(var j = 0; j < n; j++){
-      // If i and j are the same, fill it with 1
-      if (i===j){
-        row.push(1);
-      }else{
-        row.push(0);
+  var solution;
+  var board = new Board({n:n});
+  recurse(0);
+
+  function recurse(rowIx){
+    if (rowIx >= n)
+      return;
+    else {
+      for(var i=0; i<n; i++){
+         //toggle the piece
+        board.togglePiece(rowIx, i)
+        if (!board.hasColConflictAt(i)){
+          // Passed all the tests
+          if(rowIx === n-1){
+            // Found a solution
+            solution = board.rows().slice();
+            return;
+          }
+          // Make a recursive call
+          recurse(rowIx+1);
+        }
+        //test  with hasColConflictAt
+        //  ***  if it passes  push to solutions [];
+        //  ***   return
+        //  else ---- recurse
+        //   if statement that tests if solution   --->  return
+        if (solution){
+          return;
+        }
+        board.togglePiece(rowIx, i)
       }
     }
-    solution.push(row);
+    //for loop  to *** increase row and increment i (column)
+    // board.toggle(rowIx, i)
+    //
   }
+
+
+  // for(var i = 0; i < n; i++){
+  //   var row = [];
+  //   for(var j = 0; j < n; j++){
+  //     // If i and j are the same, fill it with 1
+  //     if (i===j){
+  //       row.push(1);
+  //     }else{
+  //       row.push(0);
+  //     }
+  //   }
+  //   solution.push(row);
+  // }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
